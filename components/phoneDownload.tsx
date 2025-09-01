@@ -87,7 +87,7 @@ export default function InstallPWAButton() {
               onClick={() => setShowIosInstallModal(false)}
               className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold"
             >
-              Got it
+              Got it cool
             </button>
           </div>
         </div>
