@@ -1,7 +1,7 @@
 "use client";
 
 import AppShell from "@/components/navbar";
-import React, { useEffect } from "react";
+import React, { Suspense, useEffect } from "react";
 
 export default function RootLayoutClient({ children }: { children: React.ReactNode }) {
   useEffect(() => {
@@ -20,7 +20,11 @@ export default function RootLayoutClient({ children }: { children: React.ReactNo
   return (
     <div className="">
       <div className="">
-        <AppShell>{children}</AppShell>
+        <Suspense>
+          <AppShell>
+            {children}
+          </AppShell>
+        </Suspense>
       </div>
     </div>
   );
