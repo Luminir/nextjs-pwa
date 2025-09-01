@@ -1,3 +1,4 @@
+import DownloadBtns from "@/components/phoneDownload";
 import InstallPWAButton from "@/components/phoneDownload";
 import Image from "next/image";
 
@@ -27,7 +28,7 @@ export default function Home() {
         </ol>
 
         <div className="flex items-center gap-2 bg-white">
-          <InstallPWAButton />
+          <DownloadBtns/>
         </div>
         <div className="flex gap-4 items-center flex-col sm:flex-row">
           <a

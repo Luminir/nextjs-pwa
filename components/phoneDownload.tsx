@@ -1,20 +1,96 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Image from "next/image"; // Import the Next.js Image component
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel";
+import Image from "next/image";
+import { Smartphone, Laptop } from "lucide-react";
 
 declare global {
   interface Window {
     deferredPrompt: any;
-    MSStream?: any; // 👈 fix TS error
+    MSStream?: any;
   }
 }
 
-export default function InstallPWAButton() {
+// iOS Download Button Component
+const IosDownloadBtn = ({ onClick }: { onClick: () => void }) => (
+  <Button onClick={onClick} className="bg-gradient-to-b from-white to-gray-400 hover:from-gray-300 hover:to-gray-500 text-gray-800 gap-2 w-full sm:w-auto">
+    <img src={'/pwa/ios/apple-icon.svg'} width={20} height={20}/>
+    Download for IOS
+  </Button>
+);
+
+// Android Download Button Component
+const AndroidDownloadBtn = ({ onClick }: { onClick: () => void }) => (
+  <Button onClick={onClick} className="bg-gradient-to-br from-green-800 to-green-400 hover:from-green-900 hover:to-green-500 text-white gap-2 w-full sm:w-auto">
+    <img src={'/pwa/android/android-icon.svg'} width={20} height={20}/>
+    Download for Android
+  </Button>
+);
+
+// Computer Download Button Component
+const ComputerDownloadBtn = ({ onClick }: { onClick: () => void }) => (
+  <Button onClick={onClick} className="bg-gradient-to-b from-blue-800 to-blue-500 hover:from-blue-900 hover:to-blue-600 text-white gap-2 w-full sm:w-auto">
+    <Laptop className="h-7 w-7" />
+    Download for Computer
+  </Button>
+);
+
+// Carousel Wrapper to Handle Slide Change
+const CarouselWithDots = ({ slides, isMobile }: { slides: { title: string; content: React.ReactNode }[], isMobile: boolean }) => {
+  const [api, setApi] = useState<CarouselApi | undefined>(undefined);
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    if (!api) return;
+
+    setCurrent(api.selectedScrollSnap());
+
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap());
+    });
+
+    return () => {
+      api.off("select", () => {});
+    };
+  }, [api]);
+
+  return (
+    <>
+      <Carousel setApi={setApi} className="w-full">
+        <CarouselContent className="-ml-4">
+          {slides.map((slide, index) => (
+            <CarouselItem key={index} className="pl-4">
+              <div className="px-4 text-center">
+                <h3 className="text-lg sm:text-xl font-semibold mb-2 text-white">{slide.title}</h3>
+                {slide.content}
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        {!isMobile && <CarouselPrevious className="text-black" />}
+        {!isMobile && <CarouselNext className="text-black" />}
+      </Carousel>
+      <div className="flex justify-center gap-2 mt-4">
+        {slides.map((_, index) => (
+          <div
+            key={index}
+            className={`h-2 w-2 rounded-full ${index === current ? "bg-blue-500" : "bg-gray-500"}`}
+          />
+        ))}
+      </div>
+    </>
+  );
+};
+
+// Main Download Buttons Component
+export default function DownloadBtns() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isIos, setIsIos] = useState(false);
   const [isAndroid, setIsAndroid] = useState(false);
-  const [showIosInstallModal, setShowIosInstallModal] = useState(false);
+  const [openModal, setOpenModal] = useState<"ios" | "android" | "computer" | null>(null);
 
   useEffect(() => {
     // Detect Android
@@ -22,76 +98,220 @@ export default function InstallPWAButton() {
     if (/android/i.test(ua)) setIsAndroid(true);
 
     // Detect iOS
-    if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) {
-      setIsIos(true);
-    }
+    if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) setIsIos(true);
 
-    // Catch install prompt (Android Chrome)
+    // Catch install prompt for all platforms (including computer)
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
       window.deferredPrompt = e;
       setDeferredPrompt(e);
     });
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", () => {});
+    };
   }, []);
 
-  const handleInstall = async () => {
+  const handleIosClick = () => {
+    setOpenModal("ios");
+  };
+
+  const handleAndroidClick = async () => {
     if (deferredPrompt) {
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
       console.log(`User response: ${outcome}`);
       setDeferredPrompt(null);
-    } else if (isIos) {
-      setShowIosInstallModal(true);
+    } else {
+      setOpenModal("android");
     }
   };
 
-  if (!isIos && !isAndroid) return null;
+  const handleComputerClick = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log(`User response: ${outcome}`);
+      setDeferredPrompt(null);
+    } else {
+      setOpenModal("computer"); // Fallback to modal if prompt isn't available
+    }
+  };
+
+  const iosSlides = [
+    {
+      title: "Why not App Store?",
+      content: (
+        <>
+          <p className="text-gray-400 mb-4 text-sm sm:text-base">
+          EGBO is not in the App Store because it's a Progressive Web App (PWA) — 
+          super lightweight and compatible with all IOS versions!
+        </p>
+        <Image
+          src="/pwa/ios-share-guide.jpg"
+          alt="iOS Add to Home Screen guide"
+          width={200}
+          height={300}
+          className="mx-auto rounded-lg border border-gray-300 w-full max-w-[200px]"
+        />
+        </>
+      ),
+    },
+    {
+      title: "Is your data safe?",
+      content: (
+        <>
+          <p className="text-gray-400 mb-4 text-sm sm:text-base">
+            Yes! EGBO IOS is a website that runs on your phone like a real app, keeping your data secure.
+          </p>
+          <Image
+            src="/pwa/ios-security.jpg"
+            alt="iOS Security"
+            width={200}
+            height={300}
+            className="mx-auto rounded-lg border border-gray-300 w-full max-w-[200px]"
+          />
+        </>
+      ),
+    },
+    {
+      title: "How to Install?",
+      content: (
+        <>
+          <p className="text-gray-200 mb-4 text-sm sm:text-base">
+            Tap the <strong>Share button</strong>{" "}
+            <Image
+              src="/pwa/ios-share-button.png"
+              alt="iOS Share button"
+              width={24}
+              height={24}
+              className="inline-block mx-1 align-middle"
+            />
+            at the bottom, then select <strong>Add to Home Screen</strong>.
+          </p>
+          <img
+            src="/pwa/gify.gif"
+            alt="iOS Add to Home Screen animated guide"
+            className="mx-auto rounded-lg mb-4 border border-gray-300 w-full max-w-[200px] h-auto"
+          />
+        </>
+      ),
+    },
+  ];
+
+  const androidSlides = [
+    {
+      title: "Download for Android",
+      content: (
+        <>
+          <p className="text-gray-200 mb-4 text-sm sm:text-base">
+            EGBO is a Progressive Web App (PWA), not in the Play Store, but lightweight and compatible with all Android versions!
+          </p>
+          <Image
+            src="/pwa/android-install-guide.jpg"
+            alt="Android Install guide"
+            width={200}
+            height={300}
+            className="mx-auto rounded-lg border border-gray-300 w-full max-w-[200px]"
+          />
+        </>
+      ),
+    },
+    {
+      title: "Is Your Data Safe?",
+      content: (
+        <>
+          <p className="text-gray-200 mb-4 text-sm sm:text-base">
+            Absolutely! EGBO Android is a web app on your phone, ensuring your data remains secure.
+          </p>
+          <Image
+            src="/pwa/android-security.jpg"
+            alt="Android Security"
+            width={200}
+            height={300}
+            className="mx-auto rounded-lg border border-gray-300 w-full max-w-[200px]"
+          />
+        </>
+      ),
+    },
+    {
+      title: "How to Install",
+      content: (
+        <>
+          <p className="text-gray-200 mb-4 text-sm sm:text-base">
+            Tap <strong>Install</strong> when prompted, or add to your home screen via browser settings.
+          </p>
+          <img
+            src="/pwa/android-gify.gif"
+            alt="Android Install animated guide"
+            className="mx-auto rounded-lg mb-4 border border-gray-300 w-full max-w-[200px] h-auto"
+          />
+        </>
+      ),
+    },
+  ];
 
   return (
-    <>
-      <button
-        onClick={handleInstall}
-        className="fixed bottom-20 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg"
-      >
-        {isIos ? "Add to Home Screen" : "Install App"}
-      </button>
+    <div className="flex flex-col sm:flex-row gap-4 p-4 bg-black">
+      <IosDownloadBtn onClick={handleIosClick} />
+      <AndroidDownloadBtn onClick={handleAndroidClick} />
+      <ComputerDownloadBtn onClick={handleComputerClick} />
 
-      {/* iOS Installation Modal */}
-      {isIos && showIosInstallModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-70">
-          <div className="bg-white text-black rounded-lg p-6 shadow-xl max-w-sm text-center">
-            <h2 className="font-bold text-xl mb-4">Install App</h2>
-            <p className="mb-4">
-              On an iPhone, tap the **Share button** <Image // New image for the share button
-                src="/pwa/ios-share-button.png" 
-                alt="iOS Share button"
-                width={24} // Adjust size as needed
-                height={24} // Adjust size as needed
-                className="inline-block mx-1 align-middle" // Style to keep it inline with text
-              />
-              at the bottom of the screen, then select **'Add to Home Screen'**.
+      {/* iOS Modal with Carousel */}
+      <Dialog open={openModal === "ios"} onOpenChange={() => setOpenModal(null)}>
+        <DialogContent className="max-w-[90vw] sm:max-w-md bg-black bg-opacity-90 backdrop-blur-sm text-white">
+          <DialogHeader>
+            <DialogTitle className="flex items-center justify-center gap-2 font-bold text-xl text-center sm:text-2xl bg-gradient-to-b from-white to-gray-400 text-transparent bg-clip-text">
+              <img src={'/pwa/ios/apple-icon.svg'} width={20} height={20}/>
+              Download for IOS
+            </DialogTitle>
+          </DialogHeader>
+          <CarouselWithDots slides={iosSlides} isMobile={isIos || isAndroid} />
+          <Button onClick={() => setOpenModal(null)} className="w-full bg-blue-600 hover:bg-blue-700">
+            Got it
+          </Button>
+        </DialogContent>
+      </Dialog>
+
+      {/* Android Modal with Carousel */}
+      <Dialog open={openModal === "android"} onOpenChange={() => setOpenModal(null)}>
+        <DialogContent className="max-w-[90vw] sm:max-w-md bg-black bg-opacity-90 backdrop-blur-sm text-white">
+          <DialogHeader>
+            <DialogTitle className="flex items-center justify-center gap-2 font-bold text-xl text-center sm:text-2xl bg-gradient-to-r from-green-800 to-green-900 text-transparent bg-clip-text">
+              <img src={'/pwa/android/android-icon.svg'} width={20} height={20}/>
+              Download for Android
+            </DialogTitle>
+          </DialogHeader>
+          <CarouselWithDots slides={androidSlides} isMobile={isIos || isAndroid} />
+          <Button onClick={() => setOpenModal(null)} className="w-full bg-blue-600 hover:bg-blue-700">
+            Got it
+          </Button>
+        </DialogContent>
+      </Dialog>
+
+      {/* Computer Modal */}
+      <Dialog open={openModal === "computer"} onOpenChange={() => setOpenModal(null)}>
+        <DialogContent className="max-w-[90vw] sm:max-w-md bg-black bg-opacity-90 backdrop-blur-sm text-white">
+          <DialogHeader>
+            <DialogTitle className="font-bold text-white text-xl sm:text-2xl">Install EGBO on Computer</DialogTitle>
+          </DialogHeader>
+          <div className="px-4 text-center">
+            <p className="text-gray-200 mb-4 text-sm sm:text-base">
+              Visit our website in your browser and add EGBO to your bookmarks or desktop for quick access.
             </p>
             <Image
-              src="/pwa/ios-share-guide.jpg" // Path to your guide image
-              alt="iOS Add to Home Screen guide"
+              src="/pwa/computer-guide.jpg"
+              alt="Computer Install guide"
               width={200}
               height={300}
-              className="mx-auto rounded-lg mb-4 border border-gray-300" // Added a border for better visibility
+              className="mx-auto rounded-lg border border-gray-300 w-full max-w-[200px]"
             />
-            <img
-              src="/pwa/gify.gif" // Path to your GIF
-              alt="iOS Add to Home Screen animated guide"
-              className="mx-auto rounded-lg mb-4 border border-gray-300 max-w-full h-auto" // Added styling for responsiveness
-            />
-            <button
-              onClick={() => setShowIosInstallModal(false)}
-              className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold"
-            >
-              Got it cool
-            </button>
           </div>
-        </div>
-      )}
-    </>
+          <Button onClick={() => setOpenModal(null)} className="w-full bg-blue-600 hover:bg-blue-700">
+            Got it
+          </Button>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }
