@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   Home,
@@ -15,14 +15,21 @@ import {
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [isMobileDevice, setIsMobileDevice] = React.useState(false);
 
   React.useEffect(() => {
+    // This is the combined logic
     const ua = navigator.userAgent || "";
     const isIOS = /iPad|iPhone|iPod/.test(ua);
     const isAndroid = /Android/.test(ua);
-    setIsMobileDevice(isIOS || isAndroid);
-  }, []);
+    
+    // Check for URL parameter to override
+    const forceMobile = searchParams.get('mobile') === 'true';
+
+    // Set the state based on either the user agent or the URL parameter
+    setIsMobileDevice(isIOS || isAndroid || forceMobile);
+  }, [searchParams]); // The effect will re-run when the URL search parameters change
 
   const nav = [
     { href: "/", label: "Home", icon: Home },
@@ -138,7 +145,7 @@ function BottomTabs({
             <Link
               key={href}
               href={href}
-              className="group relative flex flex-col items-center justify-center px-2"
+              className="group relative flex flex-col items-center justify-center px-2 py-3 hover:bg-gray-400 mb-3"
             >
               <div className="relative">
                 <Icon className={`size-6 ${active ? "opacity-100" : "opacity-70"}`} />
