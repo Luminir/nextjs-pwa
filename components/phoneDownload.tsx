@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel";
 import Image from "next/image";
-import { Smartphone, Laptop } from "lucide-react";
+import { Smartphone, Laptop, Share } from "lucide-react";
 
 declare global {
   interface Window {
@@ -140,19 +140,19 @@ export default function DownloadBtns() {
 
   const iosSlides = [
     {
-      title: "Why not App Store?",
+      title: "Why not in App Store?",
       content: (
         <>
           <p className="text-gray-400 mb-4 text-sm sm:text-base">
           EGBO is not in the App Store because it's a Progressive Web App (PWA) — 
-          super lightweight and compatible with all IOS versions!
+          0 second to download and work on all IOS versions!
         </p>
         <Image
-          src="/pwa/ios-share-guide.jpg"
+          src="/pwa/ios/why-not-appstore.png"
           alt="iOS Add to Home Screen guide"
           width={200}
           height={300}
-          className="mx-auto rounded-lg border border-gray-300 w-full max-w-[200px]"
+          className="mx-auto rounded-lg w-full"
         />
         </>
       ),
@@ -162,14 +162,14 @@ export default function DownloadBtns() {
       content: (
         <>
           <p className="text-gray-400 mb-4 text-sm sm:text-base">
-            Yes! EGBO IOS is a website that runs on your phone like a real app, keeping your data secure.
+            Yes! EGBO IOS is a website that runs on your phone like a real app, keeping your data secure at 1 place.
           </p>
           <Image
-            src="/pwa/ios-security.jpg"
+            src="/pwa/ios/ios-security.png"
             alt="iOS Security"
             width={200}
             height={300}
-            className="mx-auto rounded-lg border border-gray-300 w-full max-w-[200px]"
+            className="mx-auto rounded-lg w-full"
           />
         </>
       ),
@@ -178,16 +178,10 @@ export default function DownloadBtns() {
       title: "How to Install?",
       content: (
         <>
-          <p className="text-gray-200 mb-4 text-sm sm:text-base">
-            Tap the <strong>Share button</strong>{" "}
-            <Image
-              src="/pwa/ios-share-button.png"
-              alt="iOS Share button"
-              width={24}
-              height={24}
-              className="inline-block mx-1 align-middle"
-            />
-            at the bottom, then select <strong>Add to Home Screen</strong>.
+          <p className="text-gray-400 mb-4 text-sm sm:text-base">
+            Tap the <strong className="font-bold">Share button</strong>
+              <Share className="w-6 h-6 text-black justify-self-center my-0.5 p-1 bg-white rounded-sm" />
+            then select <strong className="font-bold">Add to Home Screen</strong>.
           </p>
           <img
             src="/pwa/gify.gif"
@@ -201,7 +195,7 @@ export default function DownloadBtns() {
 
   const androidSlides = [
     {
-      title: "Download for Android",
+      title: "Why not in Play Store?",
       content: (
         <>
           <p className="text-gray-200 mb-4 text-sm sm:text-base">
@@ -267,7 +261,7 @@ export default function DownloadBtns() {
             </DialogTitle>
           </DialogHeader>
           <CarouselWithDots slides={iosSlides} isMobile={isIos || isAndroid} />
-          <Button onClick={() => setOpenModal(null)} className="w-full bg-blue-600 hover:bg-blue-700">
+          <Button onClick={() => setOpenModal(null)} className="w-full bg-gradient-to-b from-white to-gray-400 hover:from-gray-300 hover:to-gray-500 text-gray-800">
             Got it
           </Button>
         </DialogContent>
@@ -283,7 +277,7 @@ export default function DownloadBtns() {
             </DialogTitle>
           </DialogHeader>
           <CarouselWithDots slides={androidSlides} isMobile={isIos || isAndroid} />
-          <Button onClick={() => setOpenModal(null)} className="w-full bg-blue-600 hover:bg-blue-700">
+          <Button onClick={() => setOpenModal(null)} className="w-full bg-gradient-to-br from-green-800 to-green-400 hover:from-green-900 hover:to-green-500 text-white">
             Got it
           </Button>
         </DialogContent>
@@ -307,7 +301,7 @@ export default function DownloadBtns() {
               className="mx-auto rounded-lg border border-gray-300 w-full max-w-[200px]"
             />
           </div>
-          <Button onClick={() => setOpenModal(null)} className="w-full bg-blue-600 hover:bg-blue-700">
+          <Button onClick={() => setOpenModal(null)} className="w-full bg-gradient-to-b from-blue-800 to-blue-500 hover:from-blue-900 hover:to-blue-600 text-white">
             Got it
           </Button>
         </DialogContent>

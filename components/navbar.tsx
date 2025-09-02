@@ -17,19 +17,27 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isMobileDevice, setIsMobileDevice] = React.useState(false);
+  const [isStandalone, setIsStandalone] = React.useState(false);
 
   React.useEffect(() => {
-    // This is the combined logic
     const ua = navigator.userAgent || "";
-    const isIOS = /iPad|iPhone|iPod/.test(ua);
-    const isAndroid = /Android/.test(ua);
-    
-    // Check for URL parameter to override
-    const forceMobile = searchParams.get('mobile') === 'true';
+    const platform = navigator.platform || "";
 
-    // Set the state based on either the user agent or the URL parameter
-    setIsMobileDevice(isIOS || isAndroid || forceMobile);
-  }, [searchParams]); // The effect will re-run when the URL search parameters change
+    // Detect mobile devices more reliably
+    const isIOS = /iPad|iPhone|iPod/.test(ua) || (platform === 'MacIntel' && navigator.maxTouchPoints > 1); // Handles iPadOS desktop mode
+    const isAndroid = /Android/.test(ua) && !/Windows Phone/.test(ua); // Exclude old Windows phones
+    
+    // Detect standalone/PWA mode
+    const isPWAiOS = (navigator as any).standalone === true; // iOS PWAs
+    const isPWAAndroid = window.matchMedia('(display-mode: standalone)').matches; // Android PWAs/TWAs
+
+    // URL param override for testing (e.g., ?pwa=true to force standalone mode)
+    const forcePWA = searchParams.get('pwa') === 'true';
+
+    // Set states
+    setIsMobileDevice(isIOS || isAndroid);
+    setIsStandalone(isPWAiOS || isPWAAndroid || forcePWA);
+  }, [searchParams]);
 
   const nav = [
     { href: "/", label: "Home", icon: Home },
@@ -41,10 +49,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname?.startsWith(href);
 
+  // Show bottom tabs only if mobile AND standalone/PWA
+  const showBottomTabs = isMobileDevice && isStandalone;
+
   return (
     <div className="min-h-dvh bg-black text-white grid grid-rows-[auto_1fr_auto]">
-      {/* Top header (desktop + all non-mobile devices) */}
-      {!isMobileDevice && (
+      {/* Top header (always, unless in mobile PWA mode) */}
+      {!showBottomTabs && (
         <header className="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-black/40 border-b border-white/10">
           <div className="mx-auto max-w-[1024px] px-4">
             <div className="flex h-14 items-center justify-between">
@@ -82,7 +93,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       <main
         className="mx-auto w-full max-w-[1024px] px-4 py-4"
         style={{
-          paddingBottom: isMobileDevice
+          paddingBottom: showBottomTabs
             ? "calc(env(safe-area-inset-bottom, 0px) + 4rem)"
             : "2rem",
         }}
@@ -90,8 +101,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         {children}
       </main>
 
-      {/* Bottom tabs (only real iOS/Android) */}
-      {isMobileDevice && (
+      {/* Bottom tabs (only mobile PWA) */}
+      {showBottomTabs && (
         <BottomTabs items={nav} activeHrefFn={isActive} />
       )}
     </div>
