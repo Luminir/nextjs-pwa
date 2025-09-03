@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel";
 import Image from "next/image";
-import { Smartphone, Laptop, Share } from "lucide-react";
+import { Smartphone, Laptop, Share, Download } from "lucide-react";
 
 declare global {
   interface Window {
@@ -130,6 +130,7 @@ export default function DownloadBtns() {
   const handleComputerClick = async () => {
     if (deferredPrompt) {
       deferredPrompt.prompt();
+      setOpenModal("computer"); // Trigger modal alongside prompt
       const { outcome } = await deferredPrompt.userChoice;
       console.log(`User response: ${outcome}`);
       setDeferredPrompt(null);
@@ -245,6 +246,68 @@ export default function DownloadBtns() {
     },
   ];
 
+  const computerContent = (
+    <div className="p-4">
+      <div className="flex flex-row justify-center gap-8 text-left">
+        <div className="bg-blue-200 rounded-lg h-[240px] w-[30px] object-cover flex justify-center">
+        <img
+          src="/pwa/computer/windows-color-icon.svg"
+          alt="Applications guide"
+          className="w-6"
+        />
+      </div>
+        <div className="max-w-[300px] max-h-[200px]">
+          <p className="text-blue-200 md:text-xl mb-2">1. Downloads</p>
+          <img
+            src="/pwa/computer/windows-download.png"
+            alt="Downloads guide"
+            width={200}
+            height={150}
+            className="rounded-lg border border-gray-300 h-[170px] w-full"
+          />
+          <p className="text-gray-200 text-sm sm:text-base mt-2">
+            Click on <span className="text-blue-400">Install</span> on top right
+          </p>
+        </div>
+        <div className="max-w-[300px] max-h-[200px]">
+          <p className="text-blue-200 md:text-xl mb-2">2. Display</p>
+          <img
+            src="/pwa/computer/windows-pinning.png"
+            alt="pinning guide"
+            width={200}
+            height={150}
+            className="rounded-lg border border-gray-300 h-[170px] w-full"
+          />
+          <p className="text-gray-200 text-sm sm:text-base mt-2">
+            Check 3 of the following (if needed)
+          </p>
+        </div>
+        <div className="max-w-[300px] max-h-[200px]">
+          <p className="text-blue-200 md:text-xl mb-2">3. Open</p>
+          <img
+            src="/pwa/computer/windows-applications.gif"
+            alt="Applications guide"
+            width={200}
+            height={150}
+            className="rounded-lg border border-gray-300 h-[170px] w-full"
+          />
+          <p className="text-gray-200 text-sm sm:text-base mt-2">
+            Open EGBO & enjoy!
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+
+  const retriggerPrompt = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log(`User response: ${outcome}`);
+      setDeferredPrompt(null);
+    }
+  };
+
   return (
     <div className="flex flex-col sm:flex-row gap-4 p-4 bg-black">
       <IosDownloadBtn onClick={handleIosClick} />
@@ -285,23 +348,18 @@ export default function DownloadBtns() {
 
       {/* Computer Modal */}
       <Dialog open={openModal === "computer"} onOpenChange={() => setOpenModal(null)}>
-        <DialogContent className="max-w-[90vw] sm:max-w-md bg-black bg-opacity-90 backdrop-blur-sm text-white">
+        <DialogContent className="max-w-[90vw] md:max-w-6xl max-h-[90vh] bg-black bg-opacity-90 backdrop-blur-sm text-white">
           <DialogHeader>
-            <DialogTitle className="font-bold text-white text-xl sm:text-2xl">Install EGBO on Computer</DialogTitle>
+            <DialogTitle className="font-bold text-center text-white text-xl sm:text-2xl flex justify-center">
+              <Download className="w-7 h-7 mr-2"/>
+              <p>How to install EGBO on Computer</p>
+            </DialogTitle>
           </DialogHeader>
-          <div className="px-4 text-center">
-            <p className="text-gray-200 mb-4 text-sm sm:text-base">
-              Visit our website in your browser and add EGBO to your bookmarks or desktop for quick access.
-            </p>
-            <Image
-              src="/pwa/computer-guide.jpg"
-              alt="Computer Install guide"
-              width={200}
-              height={300}
-              className="mx-auto rounded-lg border border-gray-300 w-full max-w-[200px]"
-            />
-          </div>
-          <Button onClick={() => setOpenModal(null)} className="w-full bg-gradient-to-b from-blue-800 to-blue-500 hover:from-blue-900 hover:to-blue-600 text-white">
+          {computerContent}
+          <a onClick={retriggerPrompt} className="text-blue-200 mt-6 text-sm text-center underline hover:cursor-pointer">
+            Problem? Download again
+          </a>
+          <Button onClick={() => setOpenModal(null)} className="w-fit px-5 py-2 justify-self-center mt-2 bg-gradient-to-b from-blue-800 to-blue-500 hover:from-blue-900 hover:to-blue-600 text-white">
             Got it
           </Button>
         </DialogContent>
