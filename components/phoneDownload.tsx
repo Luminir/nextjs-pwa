@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import Image from "next/image";
 import { Smartphone, Laptop, Share, Download, ChevronLeft, ChevronRight, BookOpen, Copy } from "lucide-react";
 
@@ -146,7 +147,7 @@ export default function DownloadBtns() {
         <>
           <p className="text-gray-400 mb-4 text-sm sm:text-base">
           EGBO is not in the App Store because it's a Progressive Web App (PWA) — 
-          0 second to download and work on all IOS versions!
+          0 second to download and work on all IOS versions at ANYWHERE!
         </p>
         <img
           src="/pwa/ios/why-not-appstore.png"
@@ -211,7 +212,7 @@ export default function DownloadBtns() {
       content: (
         <>
           <p className="text-gray-200 mb-4 text-sm sm:text-base">
-            EGBO is a Progressive Web App (PWA), not in the Play Store, but lightweight and compatible with all Android versions!
+            EGBO is a Progressive Web App (PWA), not in the Play Store, but lightweight and compatible with all Android versions at ANYWHERE!
           </p>
           <img
             src="/pwa/ios/why-not-appstore.png"
@@ -259,99 +260,210 @@ export default function DownloadBtns() {
 
   const computerContent = (
     <div>
-      {/* Windows Row */}
-      <div className="flex flex-row justify-center gap-8 text-left">
-        {/* Slim logo column */}
-        <div className="bg-blue-200 rounded-lg h-[240px] w-[30px] flex justify-center items-center">
-          <img
-            src="/pwa/computer/windows-color-icon.svg"
-            alt="Windows icon"
-            className="w-6"
-          />
-        </div>
-        {/* Steps */}
-        <div className="w-[300px]">
-          <p className="text-blue-200 md:text-xl mb-2">1. Downloads</p>
-          <img
-            src="/pwa/computer/windows-download.png"
-            alt="Windows Downloads guide"
-            className="rounded-lg border border-gray-300 h-[170px] w-full object-cover"
-          />
-          <p className="text-gray-200 text-sm sm:text-base mt-2">
-            Click on <span className="text-blue-400">Install</span> on top right
-          </p>
-        </div>
-        <div className="w-[300px]">
-          <p className="text-blue-200 md:text-xl mb-2">2. Display</p>
-          <img
-            src="/pwa/computer/windows-pinning.png"
-            alt="Windows pinning guide"
-            className="rounded-lg border border-gray-300 h-[170px] w-full object-cover"
-          />
-          <p className="text-gray-200 text-sm sm:text-base mt-2">
-            Check 3 of the following (if needed)
-          </p>
-        </div>
-
-        <div className="w-[300px]">
-          <p className="text-blue-200 md:text-xl mb-2">3. Open</p>
-          <img
-            src="/pwa/computer/windows-applications.gif"
-            alt="Windows Applications guide"
-            className="rounded-lg border border-gray-300 h-[170px] w-full object-cover"
-          />
-          <p className="text-gray-200 text-sm sm:text-base mt-2">
-            Open EGBO & enjoy!
-          </p>
-        </div>
+      {/* Mobile version (collapsible, vertical steps) */}
+      <div className="block md:hidden">
+        <Accordion type="multiple" className="w-full">
+          <AccordionItem value="windows">
+            <AccordionTrigger className="flex items-center gap-2 py-4">
+              <div className="bg-blue-200 rounded-lg p-2 flex justify-center items-center">
+                <img
+                  src="/pwa/computer/windows-color-icon.svg"
+                  alt="Windows icon"
+                  className="w-6 h-6"
+                />
+              </div>
+              <span className="text-white text-lg font-semibold">Windows</span>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="flex flex-col gap-6 text-left">
+                <div>
+                  <p className="text-blue-200 text-xl mb-2">1. Downloads</p>
+                  <img
+                    src="/pwa/computer/windows-download.png"
+                    alt="Windows Downloads guide"
+                    className="rounded-lg border border-gray-300 w-full object-cover"
+                  />
+                  <p className="text-gray-200 text-base mt-2">
+                    Click on <span className="text-blue-400">Install</span> on top right
+                  </p>
+                </div>
+                <div>
+                  <p className="text-blue-200 text-xl mb-2">2. Display</p>
+                  <img
+                    src="/pwa/computer/windows-pinning.png"
+                    alt="Windows pinning guide"
+                    className="rounded-lg border border-gray-300 w-full object-cover"
+                  />
+                  <p className="text-gray-200 text-base mt-2">
+                    Check 3 of the following (if needed)
+                  </p>
+                </div>
+                <div>
+                  <p className="text-blue-200 text-xl mb-2">3. Open</p>
+                  <img
+                    src="/pwa/computer/windows-applications.gif"
+                    alt="Windows Applications guide"
+                    className="rounded-lg border border-gray-300 w-full object-cover"
+                  />
+                  <p className="text-gray-200 text-base mt-2">
+                    Open EGBO & enjoy!
+                  </p>
+                </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="mac">
+            <AccordionTrigger className="flex items-center gap-2 py-4">
+              <div className="bg-gray-200 rounded-lg p-2 flex justify-center items-center">
+                <img
+                  src="/pwa/ios/apple-icon.svg"
+                  alt="Mac icon"
+                  className="w-6 h-6"
+                />
+              </div>
+              <span className="text-white text-lg font-semibold">Mac</span>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="flex flex-col gap-6 text-left">
+                <div>
+                  <p className="text-gray-200 text-xl mb-2">1. Click Share in Safari</p>
+                  <img
+                    src="/pwa/computer/mac-share.gif"
+                    alt="iOS Safari guide"
+                    className="rounded-lg border border-gray-300 w-full object-cover"
+                  />
+                  <p className="text-gray-200 text-base mt-2 flex gap-1">
+                    Open <span className="font-bold">EGBO</span> in Safari & click 
+                    <img
+                      src="/pwa/ios/share-icon.svg"
+                      alt="iOS Add to Home Screen animated guide"
+                      className="w-6 h-6 text-black justify-self-center my-0.5 bg-white rounded-sm border border-red-500"
+                    />
+                  </p>
+                </div>
+                <div>
+                  <p className="text-gray-200 text-xl mb-2">2. Share</p>
+                  <img
+                    src="/pwa/computer/mac-add-dock.gif"
+                    alt="iOS share guide"
+                    className="rounded-lg border border-gray-300 w-full object-cover"
+                  />
+                  <p className="text-gray-200 text-base mt-2">
+                    Tap the <strong>Share</strong> button
+                  </p>
+                </div>
+                <div>
+                  <p className="text-gray-200 text-xl mb-2">3. Add to Home</p>
+                  <img
+                    src="/pwa/computer/mac-add-homescreen.gif"
+                    alt="iOS Add to Home guide"
+                    className="rounded-lg border border-gray-300 w-full object-cover"
+                  />
+                  <p className="text-gray-200 text-base mt-2">
+                    Select <span className="font-bold">Add to Home Screen</span>
+                  </p>
+                </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </div>
-      <hr className="my-2"/>
-      {/* iOS Row */}
-      <div className="flex flex-row justify-center gap-8 text-left">
-        {/* Slim logo column */}
-        <div className="bg-gray-200 rounded-lg h-[240px] w-[30px] flex justify-center items-center">
-          <img
-            src="/pwa/ios/apple-icon.svg"
-            alt="iOS icon"
-            className="w-6"
-          />
-        </div>
-        {/* Steps */}
-        <div className="w-[300px]">
-          <p className="text-gray-200 md:text-xl mb-2">1. Click Share in Safari</p>
-          <img
-            src="/pwa/computer/mac-share.gif"
-            alt="iOS Safari guide"
-            className="rounded-lg border border-gray-300 h-[170px] w-full object-cover"
-          />
-          <p className="text-gray-200 text-sm sm:text-base mt-2 flex gap-1">
-            Open <span className="font-bold">EGBO</span> in Safari & click 
+
+      {/* Desktop version (horizontal rows) */}
+      <div className="hidden md:block">
+        {/* Windows Row */}
+        <div className="flex flex-row justify-center gap-8 text-left">
+          {/* Slim logo column */}
+          <div className="bg-blue-200 rounded-lg h-[240px] w-[30px] flex justify-center items-center">
             <img
-            src="/pwa/ios/share-icon.svg"
-            alt="iOS Add to Home Screen animated guide" className="w-6 h-6 text-black justify-self-center my-0.5 bg-white rounded-sm border border-red-500" />
-          </p>
+              src="/pwa/computer/windows-color-icon.svg"
+              alt="Windows icon"
+              className="w-6"
+            />
+          </div>
+          {/* Steps */}
+          <div className="w-[300px]">
+            <p className="text-blue-200 md:text-xl mb-2">1. Downloads</p>
+            <img
+              src="/pwa/computer/windows-download.png"
+              alt="Windows Downloads guide"
+              className="rounded-lg border border-gray-300 h-[170px] w-full object-cover"
+            />
+            <p className="text-gray-200 text-sm sm:text-base mt-2">
+              Click on <span className="text-blue-400">Install</span> on top right
+            </p>
+          </div>
+          <div className="w-[300px]">
+            <p className="text-blue-200 md:text-xl mb-2">2. Display</p>
+            <img
+              src="/pwa/computer/windows-pinning.png"
+              alt="Windows pinning guide"
+              className="rounded-lg border border-gray-300 h-[170px] w-full object-cover"
+            />
+            <p className="text-gray-200 text-sm sm:text-base mt-2">
+              Check 3 of the following (if needed)
+            </p>
+          </div>
+          <div className="w-[300px]">
+            <p className="text-blue-200 md:text-xl mb-2">3. Open</p>
+            <img
+              src="/pwa/computer/windows-applications.gif"
+              alt="Windows Applications guide"
+              className="rounded-lg border border-gray-300 h-[170px] w-full object-cover"
+            />
+            <p className="text-gray-200 text-sm sm:text-base mt-2">
+              Open EGBO & enjoy!
+            </p>
+          </div>
         </div>
-        <div className="w-[300px]">
-          <p className="text-gray-200 md:text-xl mb-2">2. Share</p>
-          <img
-            src="/pwa/computer/mac-add-dock.gif"
-            alt="iOS share guide"
-            className="rounded-lg border border-gray-300 h-[170px] w-full object-cover"
-          />
-          <p className="text-gray-200 text-sm sm:text-base mt-2">
-            Tap the <strong>Share</strong> button
-          </p>
-        </div>
-        <div className="w-[300px]">
-          <p className="text-gray-200 md:text-xl mb-2">3. Add to Home</p>
-          <img
-            src="/pwa/computer/mac-add-homescreen.gif"
-            alt="iOS Add to Home guide"
-            className="rounded-lg border border-gray-300 h-[170px] w-full object-cover"
-          />
-          <p className="text-gray-200 text-sm sm:text-base mt-2">
-            Select <span className="font-bold">Add to Home Screen</span>
-          </p>
+        <hr className="my-2"/>
+        {/* iOS Row */}
+        <div className="flex flex-row justify-center gap-8 text-left">
+          {/* Slim logo column */}
+          <div className="bg-gray-200 rounded-lg h-[240px] w-[30px] flex justify-center items-center">
+            <img
+              src="/pwa/ios/apple-icon.svg"
+              alt="iOS icon"
+              className="w-6"
+            />
+          </div>
+          {/* Steps */}
+          <div className="w-[300px]">
+            <p className="text-gray-200 md:text-xl mb-2">1. Click Share in Safari</p>
+            <img
+              src="/pwa/computer/mac-share.gif"
+              alt="iOS Safari guide"
+              className="rounded-lg border border-gray-300 h-[170px] w-full object-cover"
+            />
+            <p className="text-gray-200 text-sm sm:text-base mt-2 flex gap-1">
+              Open <span className="font-bold">EGBO</span> in Safari & click 
+              <img
+              src="/pwa/ios/share-icon.svg"
+              alt="iOS Add to Home Screen animated guide" className="w-6 h-6 text-black justify-self-center my-0.5 bg-white rounded-sm border border-red-500" />
+            </p>
+          </div>
+          <div className="w-[300px]">
+            <p className="text-gray-200 md:text-xl mb-2">2. Share</p>
+            <img
+              src="/pwa/computer/mac-add-dock.gif"
+              alt="iOS share guide"
+              className="rounded-lg border border-gray-300 h-[170px] w-full object-cover"
+            />
+            <p className="text-gray-200 text-sm sm:text-base mt-2">
+              Tap the <strong>Share</strong> button
+            </p>
+          </div>
+          <div className="w-[300px]">
+            <p className="text-gray-200 md:text-xl mb-2">3. Add to Home</p>
+            <img
+              src="/pwa/computer/mac-add-homescreen.gif"
+              alt="iOS Add to Home guide"
+              className="rounded-lg border border-gray-300 h-[170px] w-full object-cover"
+            />
+            <p className="text-gray-200 text-sm sm:text-base mt-2">
+              Select <span className="font-bold">Add to Home Screen</span>
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -407,7 +519,7 @@ export default function DownloadBtns() {
 
       {/* Computer Modal */}
       <Dialog open={openModal === "computer"} onOpenChange={() => setOpenModal(null)}>
-        <DialogContent className="max-w-[90vw] md:max-w-6xl max-h-[90vh] bg-black bg-opacity-90 backdrop-blur-sm text-white">
+        <DialogContent className="max-w-[90vw] md:max-w-6xl max-h-[90vh] overflow-y-auto bg-black bg-opacity-90 backdrop-blur-sm text-white">
           <DialogHeader>
             <DialogTitle className="font-bold text-center text-white text-xl sm:text-2xl flex justify-center">
               <Download className="w-7 h-7 mr-2"/>
